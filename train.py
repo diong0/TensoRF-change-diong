@@ -123,7 +123,7 @@ def reconstruction(args):
     aabb = train_dataset.scene_bbox.to(device)
     reso_cur = N_to_reso(args.N_voxel_init, aabb)
     nSamples = min(args.nSamples, cal_n_samples(reso_cur,args.step_ratio))
-#5927
+
 
     if args.ckpt is not None:
         ckpt = torch.load(args.ckpt, map_location=device)
