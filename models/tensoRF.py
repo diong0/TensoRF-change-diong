@@ -5,7 +5,7 @@ class TensorVM(TensorBase):
     def __init__(self, aabb, gridSize, device, **kargs):
         super(TensorVM, self).__init__(aabb, gridSize, device, **kargs)
 
-    def init_svd_volume(self, res, device):
+    def init_svd_volume(self, res, device):  # 用于初始化奇异值分解（SVD）的体积相关参数
         self.plane_coef = torch.nn.Parameter(
             0.1 * torch.randn((3, self.app_n_comp + self.density_n_comp, res, res), device=device))
         self.line_coef = torch.nn.Parameter(
