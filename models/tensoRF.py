@@ -12,7 +12,8 @@ class TensorVM(TensorBase):
             0.1 * torch.randn((3, self.app_n_comp + self.density_n_comp, res, 1), device=device))
         self.basis_mat = torch.nn.Linear(self.app_n_comp * 3, self.app_dim, bias=False, device=device)  # 基础矩阵
 
-    def get_optparam_groups(self, lr_init_spatialxyz=0.02, lr_init_network=0.001):  # lr_init_spatialxyz 是空间坐标系学习率的初始值，默认为 0.02 lr_init_network 是网络参数学习率的初始值，默认为 0.001。
+    def get_optparam_groups(self, lr_init_spatialxyz=0.02, lr_init_network=0.001):
+        # lr_init_spatialxyz是空间坐标系学习率的初始值，默认为 0.02 lr_init_network 是网络参数学习率的初始值，默认为 0.001。
         grad_vars = [{'params': self.line_coef, 'lr': lr_init_spatialxyz},
                      {'params': self.plane_coef, 'lr': lr_init_spatialxyz},
                      {'params': self.basis_mat.parameters(), 'lr': lr_init_network}]
