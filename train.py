@@ -183,7 +183,7 @@ def reconstruction(args):
         rgb_map, alphas_map, depth_map, weights, uncertainty = renderer(rays_train, tensorf, chunk=args.batch_size,
                                 N_samples=nSamples, white_bg = white_bg, ndc_ray=ndc_ray, device=device, is_train=True)
 
-        loss = torch.mean((rgb_map - rgb_train) ** 2)
+        loss = torch.mean((rgb_map - rgb_train) ** 2)   
 
 
         # loss
@@ -239,7 +239,7 @@ def reconstruction(args):
             summary_writer.add_scalar('test/psnr', np.mean(PSNRs_test), global_step=iteration)
 
 
-# 123
+
         if iteration in update_AlphaMask_list:
 
             if reso_cur[0] * reso_cur[1] * reso_cur[2]<256**3:# update volume resolution
@@ -301,8 +301,8 @@ def reconstruction(args):
 
 if __name__ == '__main__':
 
-    torch.set_default_dtype(torch.float32)
-    torch.manual_seed(20211202)
+    torch.set_default_dtype(torch.float32)  # 将张量辐射场默认设置为float32格式，方便计算  
+    torch.manual_seed(20211202)  #设置随机数种子，方便重现结果
     np.random.seed(20211202)
 
     args = config_parser()
