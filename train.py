@@ -97,7 +97,7 @@ def reconstruction(args):
     ndc_ray = args.ndc_ray
 
     # init resolution
-    upsamp_list = args.upsamp_list
+    upsamp_list = args.upsamp_list  # 上采样，在2000、3000、4000、5500、7000步对向量和矩阵进行线性和双线性上采样
     update_AlphaMask_list = args.update_AlphaMask_list
     n_lamb_sigma = args.n_lamb_sigma
     n_lamb_sh = args.n_lamb_sh
