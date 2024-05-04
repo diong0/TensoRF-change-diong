@@ -80,7 +80,7 @@ def render_test(args):
         evaluation_path(test_dataset, tensorf, c2ws, renderer, f'{logfolder}/{args.expname}/imgs_path_all/',
                         N_vis=-1, N_samples=-1, white_bg=white_bg, ndc_ray=ndc_ray, device=device)
 
-
+# 123
 def reconstruction(args):
     # init dataset
     dataset = dataset_dict[args.dataset_name]
