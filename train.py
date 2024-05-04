@@ -99,8 +99,8 @@ def reconstruction(args):
     # init resolution
     upsamp_list = args.upsamp_list  # 上采样，在2000、3000、4000、5500、7000步对向量和矩阵进行线性和双线性上采样
     update_AlphaMask_list = args.update_AlphaMask_list
-    n_lamb_sigma = args.n_lamb_sigma
-    n_lamb_sh = args.n_lamb_sh
+    n_lamb_sigma = args.n_lamb_sigma  # 体密度特征值
+    n_lamb_sh = args.n_lamb_sh  # 颜色特征值 
 
     
     if args.add_timestamp:
@@ -120,9 +120,9 @@ def reconstruction(args):
 
     # init parameters
     # tensorVM, renderer = init_parameters(args, train_dataset.scene_bbox.to(device), reso_list[0])
-    aabb = train_dataset.scene_bbox.to(device)
-    reso_cur = N_to_reso(args.N_voxel_init, aabb)
-    nSamples = min(args.nSamples, cal_n_samples(reso_cur,args.step_ratio))
+    aabb = train_dataset.scene_bbox.to(device) # 场景的边界框
+    reso_cur = N_to_reso(args.N_voxel_init, aabb) #N_0^3——N^3
+    nSamples = min(args.nSamples, cal_n_samples(reso_cur,args.step_ratio)) # 采样
 
 
     if args.ckpt is not None:
@@ -239,7 +239,7 @@ def reconstruction(args):
             summary_writer.add_scalar('test/psnr', np.mean(PSNRs_test), global_step=iteration)
 
 
-# 123
+
         if iteration in update_AlphaMask_list:
 
             if reso_cur[0] * reso_cur[1] * reso_cur[2]<256**3:# update volume resolution
