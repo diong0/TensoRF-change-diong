@@ -108,7 +108,7 @@ def reconstruction(args):
     else:
         logfolder = f'{args.basedir}/{args.expname}'
     
-
+    # 123
     # init log file
     os.makedirs(logfolder, exist_ok=True)
     os.makedirs(f'{logfolder}/imgs_vis', exist_ok=True)
