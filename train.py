@@ -120,8 +120,8 @@ def reconstruction(args):
         kwargs.update({'device': device})
         tensorf = eval(args.model_name)(**kwargs)
         tensorf.load(ckpt)
-    else: # 创建模型
-        tensorf = eval(args.model_name)(aabb, reso_cur, device,
+    else:  # 创建模型
+        tensorf = eval(args.model_name)(aabb, reso_cur, device,  #对于'TensorVMSplit'，renderer<—models.tensoRF<—tensorBase
                                         density_n_comp=n_lamb_sigma, appearance_n_comp=n_lamb_sh,
                                         app_dim=args.data_dim_color, near_far=near_far,
                                         shadingMode=args.shadingMode, alphaMask_thres=args.alpha_mask_thre,
@@ -130,7 +130,7 @@ def reconstruction(args):
                                         featureC=args.featureC, step_ratio=args.step_ratio,
                                         fea2denseAct=args.fea2denseAct)
 
-    grad_vars = tensorf.get_optparam_groups(args.lr_init, args.lr_basis) #优化器参数
+    grad_vars = tensorf.get_optparam_groups(args.lr_init, args.lr_basis)  #优化器参数
     if args.lr_decay_iters > 0:
         lr_factor = args.lr_decay_target_ratio ** (1 / args.lr_decay_iters)
     else:
