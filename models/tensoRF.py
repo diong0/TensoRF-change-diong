@@ -154,7 +154,7 @@ class TensorVMSplit(TensorBase):
     def init_svd_volume(self, res, device):
         self.density_plane, self.density_line = self.init_one_svd(self.density_n_comp, self.gridSize, 0.1, device)
         self.app_plane, self.app_line = self.init_one_svd(self.app_n_comp, self.gridSize, 0.1, device)
-        self.basis_mat = torch.nn.Linear(sum(self.app_n_comp), self.app_dim, bias=False).to(device)
+        self.basis_mat = torch.nn.Linear(sum(self.app_n_comp), self.app_dim, bias=False).to(device)#linear全连接层,输入484848,输出27,[n,27]进mlp,得到颜色
 
     def init_one_svd(self, n_component, gridSize, scale, device):
         plane_coef, line_coef = [], []
@@ -239,12 +239,12 @@ class TensorVMSplit(TensorBase):
         plane_coef_point, line_coef_point = [], []
         for idx_plane in range(len(self.app_plane)):
             plane_coef_point.append(F.grid_sample(self.app_plane[idx_plane], coordinate_plane[[idx_plane]],
-                                                  align_corners=True).view(-1, *xyz_sampled.shape[:1]))#[n,48]
+                                                  align_corners=True).view(-1, *xyz_sampled.shape[:1]))
             line_coef_point.append(F.grid_sample(self.app_line[idx_plane], coordinate_line[[idx_plane]],
-                                                 align_corners=True).view(-1, *xyz_sampled.shape[:1]))#[n,48]
-        plane_coef_point, line_coef_point = torch.cat(plane_coef_point), torch.cat(line_coef_point)#将两个[n,48]拼接为[n,96]
-
-        return self.basis_mat((plane_coef_point * line_coef_point).T)#偏移矩阵
+                                                 align_corners=True).view(-1, *xyz_sampled.shape[:1]))
+        plane_coef_point, line_coef_point = torch.cat(plane_coef_point), torch.cat(line_coef_point)
+        #对于3种坐标表示(见论文),每个都取出[n,48]的特征并concat到一起,成为[n,3*48]
+        return self.basis_mat((plane_coef_point * line_coef_point).T)#进全连接层
 
     @torch.no_grad()
     def up_sampling_VM(self, plane_coef, line_coef, res_target):

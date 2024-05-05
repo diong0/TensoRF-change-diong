@@ -164,17 +164,17 @@ def reconstruction(args):
     print(f"initial TV_weight density: {TV_weight_density} appearance: {TV_weight_app}")
 
     pbar = tqdm(range(args.n_iters), miniters=args.progress_refresh_rate, file=sys.stdout)
-    for iteration in pbar:
+    for iteration in pbar:#开始训练
 
         ray_idx = trainingSampler.nextids()
         rays_train, rgb_train = allrays[ray_idx], allrgbs[ray_idx].to(device)
 
-        #rgb_map, alphas_map, depth_map, weights, uncertainty
+        #rgb_map, alphas_map, depth_map, weights, uncertainty  颜色,alpha,深度图……
         rgb_map, alphas_map, depth_map, weights, uncertainty = renderer(rays_train, tensorf, chunk=args.batch_size,
                                                                         N_samples=nSamples, white_bg=white_bg,
                                                                         ndc_ray=ndc_ray, device=device, is_train=True)
 
-        loss = torch.mean((rgb_map - rgb_train) ** 2)
+        loss = torch.mean((rgb_map - rgb_train) ** 2)#颜色的L2loss
 
         # loss
         total_loss = loss
@@ -198,7 +198,7 @@ def reconstruction(args):
             total_loss = total_loss + loss_tv
             summary_writer.add_scalar('train/reg_tv_app', loss_tv.detach().item(), global_step=iteration)
 
-        optimizer.zero_grad()
+        optimizer.zero_grad()#反向传播
         total_loss.backward()
         optimizer.step()
 
@@ -211,7 +211,7 @@ def reconstruction(args):
         for param_group in optimizer.param_groups:
             param_group['lr'] = param_group['lr'] * lr_factor
 
-        # Print the current values of the losses.
+        # Print the current values of the losses.记录参数
         if iteration % args.progress_refresh_rate == 0:
             pbar.set_description(
                 f'Iteration {iteration:05d}:'
@@ -221,17 +221,17 @@ def reconstruction(args):
             )
             PSNRs = []
 
-        if iteration % args.vis_every == args.vis_every - 1 and args.N_vis != 0:
+        if iteration % args.vis_every == args.vis_every - 1 and args.N_vis != 0:#每1w轮跑图片看
             PSNRs_test = evaluation(test_dataset, tensorf, args, renderer, f'{logfolder}/imgs_vis/', N_vis=args.N_vis,
                                     prtx=f'{iteration:06d}_', N_samples=nSamples, white_bg=white_bg, ndc_ray=ndc_ray,
                                     compute_extra_metrics=False)
             summary_writer.add_scalar('test/psnr', np.mean(PSNRs_test), global_step=iteration)
 
-        if iteration in update_AlphaMask_list:
+        if iteration in update_AlphaMask_list:#物体的空间位置轮廓
 
             if reso_cur[0] * reso_cur[1] * reso_cur[2] < 256 ** 3:  # update volume resolution
                 reso_mask = reso_cur
-            new_aabb = tensorf.updateAlphaMask(tuple(reso_mask))
+            new_aabb = tensorf.updateAlphaMask(tuple(reso_mask))#计算新的边界框
             if iteration == update_AlphaMask_list[0]:
                 tensorf.shrink(new_aabb)
                 # tensorVM.alphaMask = None

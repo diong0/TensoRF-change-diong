@@ -418,7 +418,7 @@ class TensorBase(torch.nn.Module):  #继承torch的初始化
             dists = torch.cat((z_vals[:, 1:] - z_vals[:, :-1], torch.zeros_like(z_vals[:, :1])), dim=-1)
         viewdirs = viewdirs.view(-1, 1, 3).expand(xyz_sampled.shape)
 
-        if self.alphaMask is not None:
+        if self.alphaMask is not None:#缩小aabb
             alphas = self.alphaMask.sample_alpha(xyz_sampled[ray_valid])
             alpha_mask = alphas > 0
             ray_invalid = ~ray_valid
