@@ -121,7 +121,7 @@ def reconstruction(args):
         tensorf = eval(args.model_name)(**kwargs)
         tensorf.load(ckpt)
     else: # 创建模型
-        tensorf = eval(args.model_name)(aabb, reso_cur, device,
+        tensorf = eval(args.model_name)(aabb, reso_cur, device,    #对于'TensorVMSplit'，renderer<—models.tensoRF<—tensorBase
                                         density_n_comp=n_lamb_sigma, appearance_n_comp=n_lamb_sh,
                                         app_dim=args.data_dim_color, near_far=near_far,
                                         shadingMode=args.shadingMode, alphaMask_thres=args.alpha_mask_thre,
