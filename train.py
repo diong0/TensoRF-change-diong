@@ -120,8 +120,13 @@ def reconstruction(args):
         kwargs.update({'device': device})
         tensorf = eval(args.model_name)(**kwargs)
         tensorf.load(ckpt)
+<<<<<<< HEAD
     else:  # 创建模型
         tensorf = eval(args.model_name)(aabb, reso_cur, device,  #对于'TensorVMSplit'，renderer<—models.tensoRF<—tensorBase
+=======
+    else: # 创建模型
+        tensorf = eval(args.model_name)(aabb, reso_cur, device,    #对于'TensorVMSplit'，renderer<—models.tensoRF<—tensorBase
+>>>>>>> 861994b683952c077bed7fcf1a4e82d79d159757
                                         density_n_comp=n_lamb_sigma, appearance_n_comp=n_lamb_sh,
                                         app_dim=args.data_dim_color, near_far=near_far,
                                         shadingMode=args.shadingMode, alphaMask_thres=args.alpha_mask_thre,
