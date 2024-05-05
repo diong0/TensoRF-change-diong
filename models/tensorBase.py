@@ -418,7 +418,7 @@ class TensorBase(torch.nn.Module):  #继承torch的初始化
             dists = torch.cat((z_vals[:, 1:] - z_vals[:, :-1], torch.zeros_like(z_vals[:, :1])), dim=-1)
         viewdirs = viewdirs.view(-1, 1, 3).expand(xyz_sampled.shape)
 
-        if self.alphaMask is not None:#缩小aabb
+        if self.alphaMask is not None:  #缩小aabb
             alphas = self.alphaMask.sample_alpha(xyz_sampled[ray_valid])
             alpha_mask = alphas > 0
             ray_invalid = ~ray_valid
@@ -432,15 +432,15 @@ class TensorBase(torch.nn.Module):  #继承torch的初始化
             xyz_sampled = self.normalize_coord(xyz_sampled)  # 归一化坐标
             sigma_feature = self.compute_densityfeature(xyz_sampled[ray_valid])  #计算体密度特征
 
-            validsigma = self.feature2density(sigma_feature)# 将得到的特征用激活函数转换为体密度
+            validsigma = self.feature2density(sigma_feature)  # 将得到的特征用激活函数转换为体密度
             sigma[ray_valid] = validsigma
 
         alpha, weight, bg_weight = raw2alpha(sigma, dists * self.distance_scale)
 
-        app_mask = weight > self.rayMarch_weight_thres #app-appearance,大于阈值就认为是物体表面 
+        app_mask = weight > self.rayMarch_weight_thres  #app-appearance,大于阈值就认为是物体表面
 
         if app_mask.any():
-            app_features = self.compute_appfeature(xyz_sampled[app_mask]) #计算颜色特征
+            app_features = self.compute_appfeature(xyz_sampled[app_mask])  #计算颜色特征
             valid_rgbs = self.renderModule(xyz_sampled[app_mask], viewdirs[app_mask], app_features)
             rgb[app_mask] = valid_rgbs
 

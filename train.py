@@ -164,7 +164,7 @@ def reconstruction(args):
     print(f"initial TV_weight density: {TV_weight_density} appearance: {TV_weight_app}")
 
     pbar = tqdm(range(args.n_iters), miniters=args.progress_refresh_rate, file=sys.stdout)
-    for iteration in pbar:#开始训练
+    for iteration in pbar:  #开始训练
 
         ray_idx = trainingSampler.nextids()
         rays_train, rgb_train = allrays[ray_idx], allrgbs[ray_idx].to(device)
@@ -174,7 +174,7 @@ def reconstruction(args):
                                                                         N_samples=nSamples, white_bg=white_bg,
                                                                         ndc_ray=ndc_ray, device=device, is_train=True)
 
-        loss = torch.mean((rgb_map - rgb_train) ** 2)#颜色的L2loss
+        loss = torch.mean((rgb_map - rgb_train) ** 2)  #颜色的L2loss
 
         # loss
         total_loss = loss
@@ -198,7 +198,7 @@ def reconstruction(args):
             total_loss = total_loss + loss_tv
             summary_writer.add_scalar('train/reg_tv_app', loss_tv.detach().item(), global_step=iteration)
 
-        optimizer.zero_grad()#反向传播
+        optimizer.zero_grad()  #反向传播
         total_loss.backward()
         optimizer.step()
 
@@ -221,17 +221,17 @@ def reconstruction(args):
             )
             PSNRs = []
 
-        if iteration % args.vis_every == args.vis_every - 1 and args.N_vis != 0:#每1w轮跑图片看
+        if iteration % args.vis_every == args.vis_every - 1 and args.N_vis != 0:  #每1w轮跑图片看
             PSNRs_test = evaluation(test_dataset, tensorf, args, renderer, f'{logfolder}/imgs_vis/', N_vis=args.N_vis,
                                     prtx=f'{iteration:06d}_', N_samples=nSamples, white_bg=white_bg, ndc_ray=ndc_ray,
                                     compute_extra_metrics=False)
             summary_writer.add_scalar('test/psnr', np.mean(PSNRs_test), global_step=iteration)
 
-        if iteration in update_AlphaMask_list:#物体的空间位置轮廓
+        if iteration in update_AlphaMask_list:  #物体的空间位置轮廓
 
             if reso_cur[0] * reso_cur[1] * reso_cur[2] < 256 ** 3:  # update volume resolution
                 reso_mask = reso_cur
-            new_aabb = tensorf.updateAlphaMask(tuple(reso_mask))#计算新的边界框
+            new_aabb = tensorf.updateAlphaMask(tuple(reso_mask))  #计算新的边界框
             if iteration == update_AlphaMask_list[0]:
                 tensorf.shrink(new_aabb)
                 # tensorVM.alphaMask = None
@@ -284,7 +284,7 @@ def reconstruction(args):
 
 if __name__ == '__main__':
 
-    torch.set_default_dtype(torch.float32)  # 将张量辐射场默认设置为float32格式，方便计算  
+    torch.set_default_dtype(torch.float32)  # 将张量辐射场默认设置为float32格式，方便计算
     torch.manual_seed(20211202)  #设置随机数种子，方便重现结果
     np.random.seed(20211202)
 
